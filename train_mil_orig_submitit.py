@@ -145,6 +145,14 @@ def plot_attention_map(color_map, x_coords, y_coords, name):
 
     return None
 
+def init_seed(args):
+    import torch
+    torch.cuda.manual_seed(args.seed)
+    torch.cuda.manual_seed_all(args.seed)
+    torch.manual_seed(args.seed)
+    np.random.seed(args.seed)
+    random.seed(args.seed)
+
 def seed_worker(worker_id):
     worker_seed = torch.initial_seed() % 2**32
     np.random.seed(worker_seed)
@@ -375,6 +383,8 @@ def process_experiment(args):
     # ================================================================================================================
     # Prepare dataset
     # Preparation of splitting csv files
+    init_seed(args)
+    
     torch.manual_seed(args.seed)
     root = "/mnt/beegfs/work/H2020DeciderFicarra/decider/feats/"+args.trial+'/'+args.res
 
