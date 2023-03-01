@@ -384,12 +384,12 @@ def process_experiment(args):
     # Prepare dataset
     # Preparation of splitting csv files
     init_seed(args)
-    
+
     torch.manual_seed(args.seed)
     root = "/mnt/beegfs/work/H2020DeciderFicarra/decider/feats/"+args.trial+'/'+args.res
 
     g = torch.Generator()
-    g.manual_seed(0)
+    g.manual_seed(args.seed)
 
     train_dataset = WSI(root, "train")
     train_dataloader = DataLoader(train_dataset,
@@ -398,6 +398,7 @@ def process_experiment(args):
                                   num_workers=0,
                                   worker_init_fn=seed_worker,
                                   generator=g)
+
     test_dataset = WSI(root, "test")
     test_dataloader = DataLoader(test_dataset,
                                  batch_size=1,
@@ -418,7 +419,7 @@ def process_experiment(args):
         del state_dict_weights['b_classifier.v.1.bias']
         milnet.load_state_dict(state_dict_weights, strict=False)
     criterion = nn.BCEWithLogitsLoss()
-    optimizer = torch.optim.Adam(milnet.parameters(), lr=0.00005, betas=(0.5, 0.9),
+    optimizer = torch.optim.Adam(milnet.parameters(), lr=args.lr, betas=(0.5, 0.9),
                                  weight_decay=args.weight_decay)
     # optimizer = torch.optim.SGD(milnet.parameters(), lr=0.001, weight_decay=args.weight_decay)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, args.num_epochs, 0.000005)
@@ -440,7 +441,6 @@ def process_experiment(args):
 
 
         run = wandb.init(project=args.project, reinit=True, name=args.trial + '_res' +args.res+'_lr'+str(args.lr)+'_epoc'+str(args.num_epochs)+'_dropout'+str(args.dropout_node), settings=wandb.Settings(start_method="fork"))
-
         wandb.config.update(args)
 
         # wandb.log({"Train - Short": train_dataset.num_class(cl=0),
