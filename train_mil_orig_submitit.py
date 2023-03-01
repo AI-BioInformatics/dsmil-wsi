@@ -149,6 +149,7 @@ def init_seed(args):
     import torch
     torch.cuda.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
+    torch.backends.cudnn.benchmark = False
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
     random.seed(args.seed)
@@ -350,8 +351,6 @@ def main():
     parser.add_argument('--data_path', type=str, default='/mnt/beegfs/work/H2020DeciderFicarra/DECIDER/features/trials_1/without_dim/All_pos')
 
     args = parser.parse_args()
-    # cases=["All_sep_without_dim_pfi_filt0_pfi_thr210","All_sep_without_dim_pfi_filt30_pfi_thr210","All_without_dim_pfi_filt0_pfi_thr210","All_without_dim_pfi_filt30_pfi_thr210",
-    # "All_with_dim_pfi_filt0_pfi_thr210","All_sep_with_dim_pfi_filt30_pfi_thr210","All_sep_with_dim_pfi_filt0_pfi_thr210","All_with_dim_pfi_filt30_pfi_thr210"]
 
     params = {'res': ['x5', 'x5s_2', 'x5s_3']*3}
 
